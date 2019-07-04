@@ -1,0 +1,486 @@
+﻿
+@{
+    ViewBag.Title = "Billing Received Information";
+}
+<!--#region Table Data-->
+<div class="col-xs-12 ">
+    <div class="widget-box">
+        <div class="widget-body">
+            <div class="widget-main">
+                <input type="hidden" id="hidden_area" />
+                <div class="row">
+                    <div class="col-xs-12 ">
+                        <div class="widget-box ">
+
+                            <div class="widget-header">
+                                <h4 class="widget-title">@ViewBag.Title</h4>
+
+                                <div class="widget-toolbar">
+                                    <a href="javascript:search()">
+                                        <i class="ace-icon fa fa-search"></i>
+                                    </a>
+
+
+                                    <a href="javascript:ReloadTable()">
+                                        <i class="ace-icon fa fa-refresh"></i>
+                                    </a>
+
+                                    <a href="javascript:ShowInputModal()">
+                                        <i class="ace-icon fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <table id="BillingInfoList" class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Billing Date</th>
+                                                <th>Tenant</th>
+                                                <th>Particulars To Bill</th>
+                                                <th>Amount</th>
+                                                <th>Note</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+<!-- #region Search Modal -->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="searchModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">@ViewBag.Title</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="searchForm">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iSTenantName">Tenant</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="iSTenantName" name="STenantInfoId"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iSDateFrom">Billing Date From</label>
+                        <div class="col-sm-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="iSDateFrom" name="SDateFrom" class="form-control" />
+                                <span class="input-group-addon">
+                                    <i class="ace-icon fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iSDateTo">Billing Date To</label>
+                        <div class="col-sm-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="iSDateTo" name="SDateTo" class="form-control" />
+                                <span class="input-group-addon">
+                                    <i class="ace-icon fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="searchInTable()">Search</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+<!--#region Input Modal-->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="inputModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">@ViewBag.Title</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="inputForm">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iTenantName"> Tenant</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="iTenantName" name="TenantInfoId" required></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iDate"> Billing Date</label>
+                        <div class="col-sm-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="iDate" name="Date" class="form-control" required/>
+                                <span class="input-group-addon">
+                                    <i class="ace-icon fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <table id="simple-table" class="table  table-bordered ">
+                        <thead>
+                            <tr>
+                                <th>Particulars To Bill </th>
+                                <th>Amount</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Rent <input type="hidden" value="Rent" name="Purpose"></td>
+                                <td><input type="number" onkeydown="return event.keyCode !== 69" name="Amount" id="Rent" placeholder="Amount" class="form-control cAmount" required /></td>
+                                <td><input type="text"  name="Note" placeholder="Note" class="form-control cNote"/></td>
+                            </tr>
+                            <tr>
+                                <td>Common Bill <input type="hidden" value="Common Bill" name="Purpose"></td>
+                                <td><input type="number" onkeydown="return event.keyCode !== 69" name="Amount" id="Common" placeholder="Amount" class="form-control cAmount" required/></td>
+                                <td><input type="text" name="Note" placeholder="Note" class="form-control cNote" /></td>
+                            </tr>
+                            <tr>
+                                <td>Electricity Bill <input type="hidden" value="Electricity Bill" name="Purpose"></td>
+                                <td><input type="number" onkeydown="return event.keyCode !== 69" name="Amount" id="Electricity" placeholder="Amount" class="form-control cAmount" required/></td>
+                                <td><input type="text" name="Note" placeholder="Note" class="form-control cNote" /></td>
+                            </tr>
+                            <tr>
+                                <td>WASA Bill <input type="hidden" value="WASA Bill" name="Purpose"></td>
+                                <td><input type="number" onkeydown="return event.keyCode !== 69" name="Amount" id="Wasa" placeholder="Amount" class="form-control cAmount" required/></td>
+                                <td><input type="text" name="Note" placeholder="Note" class="form-control cNote" /></td>
+                            </tr>
+                            <tr>
+                                <td>Emergency Electricity Bill <input type="hidden" value="Emergency Electricity Bill" name="Purpose"></td>
+                                <td><input type="number" onkeydown="return event.keyCode !== 69" name="Amount" id="EmElectricity" placeholder="Amount" class="form-control cAmount" required/></td>
+                                <td><input type="text" name="Note" placeholder="Note" class="form-control cNote" /></td>
+                            </tr>
+                        </tbody>
+                    </table>                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit_button" class="btn btn-primary" onclick="saveData()">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+
+<!--#region Edit Modal-->
+
+<div class=" modal fade in" tabindex="-1" role="dialog" id="editModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">@ViewBag.Title</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="editForm">
+
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="TenantName"> Tenant</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="TenantName" name="TenantInfoId" required></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="BillingDate"> Billing Date</label>
+                        <div class="col-sm-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="BillingDate" name="Date" class="form-control" required />
+                                <span class="input-group-addon">
+                                    <i class="ace-icon fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <table id="simple-table" class="table  table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Particulars To Bill </th>
+                                <th>Amount</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Amount <input type="hidden" id="Purpose" name="Purpose"></td>
+                                <td><input type="number" onkeydown="return event.keyCode !== 69" name="Amount" id="Amount" placeholder="Amount" class="form-control cAmount" required /></td>
+                                <td><input type="text" name="Note" id="Note" placeholder="Note" class="form-control cNote" /></td>
+                            </tr> 
+                            
+
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit_button" class="btn btn-primary" onclick="saveEditData()">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#endregion-->
+
+
+
+
+@section scripts
+{
+    <script>
+        //#region initials
+
+        $(document).ready(function () {
+
+            $('#submit_button').on('click', function () {
+                $('#inputForm').validate();
+                $('#simple-table').validate();
+            });
+        });
+
+        var table = null;
+        $(document).ready(function () {
+            $("#iDate").datetimepicker({
+                format: "YYYY-MM-DD"
+            });
+            $("#iSDateFrom").datetimepicker({
+                format: "YYYY-MM-DD",
+                maxDate: 'now'
+            });
+            $("#iSDateTo").datetimepicker({
+                format: "YYYY-MM-DD",
+                useCurrent: false,
+                maxDate: 'now'
+            });
+            $("#iSDateFrom").on("dp.change", function (e) {
+                $('#iSDateTo').data("DateTimePicker").minDate(e.date);
+            });
+            $("#iSDateTo").on("dp.change", function (e) {
+                $('#iSDateFrom').data("DateTimePicker").maxDate(e.date);
+            });
+
+            $.ajax({
+                type: 'Get',
+                url: '/TenantInfo/TenantList'
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#iSTenantName').append('<option value="">All Tenant</option>');
+                        $.each(result.Data, function () {
+                            $('#iSTenantName').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                            $('#iTenantName').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                            $('#TenantName').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                        });
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+            LoadData();
+        });
+
+        //#endregion
+        // #region Table Data
+        function LoadData()
+        {
+            table = $('#BillingInfoList').DataTable({
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: '/BillingReceivedInfo/GetList',
+                    type: 'POST',
+                    dataType: "JSON"
+                },
+                columns: [
+                    { data: "BillingDate" },
+                    { data: "TenantName" },
+                    { data: "Purpose" },
+                    { data: "Amount" },
+                    { data: "Note" },
+                    {
+                        data: null, width: 50, orderable: false, render: function (data, type, row) {
+                            return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:EditData(" + row.Id + ");'><i class='fa fa-edit'></i></a>";
+                        }
+                    }
+                ],
+                dom: '<"top"Bi>tr<"bottom"p><"clear">',
+                lengthMenu:
+                [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+                buttons: ['pageLength', 'print']
+            });
+        }
+        
+        // #endregion
+
+
+        // #region Edit Data
+        function EditData(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/BillingReceivedInfo/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#iId').val(result.Data.Id);
+                        $('#Purpose').val(result.Data.Purpose);
+                        $('#TenantName').val(result.Data.TenantInfoId).prop("readonly", "true");
+                        $('#BillingDate').val(result.Data.BillingDate).prop("readonly", "true");
+                        $('#Amount').val(result.Data.Amount);
+                        $('#Note').val(result.Data.Note);                                               
+                        $('#editModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+        // #endregion
+
+
+        // #region Edit Data
+
+        function saveEditData() {
+            $("#editForm").submit();
+        }
+        $("#editForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+            var isValid = $("#editForm").valid();
+            //var isOkay = $("#simple-table").valid();
+
+            if (isValid == false) {
+
+            }
+
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/BillingReceivedInfo/Update',
+                    data: frmValues
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            $('#editModal').modal('hide');
+                            table.ajax.reload();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        xhr.preventDefault();
+                        $('#editModal').modal({ "backdrop": "static" });
+                        alert("Please Set Value of Date and Amonut");
+                    });
+            }
+
+        });
+
+        // #endregion
+
+
+
+        // #region Input Data
+
+        function ShowInputModal() {
+            $("#inputForm").trigger("reset");
+            $('#inputModal').modal('show');
+        }
+        function saveData() {
+            $("#inputForm").submit();
+        }
+        $("#inputForm").on("submit", function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var frmValues = $this.serialize();
+            var isValid = $("#inputForm").valid();
+            //var isOkay = $("#simple-table").valid();
+
+            if (isValid == false) {
+
+            }
+
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/BillingReceivedInfo/Save',
+                    data: frmValues
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            $('#inputModal').modal('hide');
+                            table.ajax.reload();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        xhr.preventDefault();
+                        $('#inputModal').modal({ "backdrop": "static" });
+                        alert("Please Set Value of Date and Amonut");
+                    });
+            }
+
+        });
+        // #endregion
+
+
+
+        //#region Search Data
+        function search() {
+            $('#searchModal').modal('toggle');
+        }
+        function setSearchVals(iTenantName, iDateFrom, iDateTo) {
+            table.columns(0).search(iTenantName);
+            table.columns(1).search(iDateFrom);
+            table.columns(2).search(iDateTo);
+        }
+        function searchInTable() {
+            setSearchVals($('#iSTenantName').val(), $('#iSDateFrom').val(), $('#iSDateTo').val());
+            table.ajax.reload();
+        }
+        function clearSearch() {
+            $('#iSTenantName').val('');
+            $('#iSDateFrom').val('');
+            $('#iSDateTo').val('');
+        }
+        //#endregion
+
+        
+    </script>
+}

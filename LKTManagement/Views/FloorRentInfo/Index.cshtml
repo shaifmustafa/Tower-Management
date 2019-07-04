@@ -1,0 +1,468 @@
+﻿
+@{
+    ViewBag.Title = "Floor Rent Information";
+}
+
+<div class="col-xs-12 ">
+    <div class="widget-box">
+        <div class="widget-body">
+            <div class="widget-main">
+                <input type="hidden" id="hidden_area" />
+                <div class="row">
+                    <div class="col-xs-12 ">
+                        <div class="widget-box ">
+
+                            <div class="widget-header">
+                                <h4 class="widget-title">@ViewBag.Title</h4>
+
+                                <div class="widget-toolbar">
+                                    <a href="javascript:search()">
+                                        <i class="ace-icon fa fa-search"></i>
+                                    </a>
+
+
+                                    <a href="javascript:ReloadTable()">
+                                        <i class="ace-icon fa fa-refresh"></i>
+                                    </a>
+
+                                    <a href="javascript:ShowInputModal()">
+                                        <i class="ace-icon fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <table id="FloorRentInfoList" class="table table-striped table-bordered table-hover table-responsive">
+                                        <thead>
+                                            <tr>
+                                                <th>Floor Level</th>
+                                                <th>Tenant Name</th>
+                                                <th>Effective Date</th>
+                                                <th>Expiry Date</th>
+                                                <th>Rent Space SFT</th>
+                                                <th>SFT Rate</th>
+                                                <th>Monthly Common Service Charge</th>
+                                                <th>Less AIT</th>
+                                                <th>AIT on Rent</th>
+                                                <th>AIT on Common</th>
+                                                <th>Advance Pay</th>
+                                                <th>Advance Adjustment</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region Search Modal-->
+<div class=" modal fade in" tabindex="-1" role="dialog" id="searchModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">@ViewBag.Title</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iSTenantName"> Tenant</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="iSTenantName" name="STenantName"></select>
+                        </div>
+                    </div>                                        
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="searchInTable()">Search</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion-->
+
+<!--#region Create and Edit Modal-->
+
+<div class=" modal fade in" tabindex="-1" role="dialog" id="inputModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">@ViewBag.Title</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="inputForm">
+                    <input type="hidden" id="iId" name="Id" value="0" class="form-control" />
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iTenantName"> Tenant</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="iTenantName" name="TenantInfoId" required></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iSFloorLevel"> Floor Level</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iFloorLevel" name="FloorLevel" placeholder="Floor Level" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iEffectiveDate"> Effective Date </label>
+                        <div class="col-sm-9">
+                            <input type="text" id="iEffectiveDate" name="EffectiveDate" placeholder="Effective Date" class="form-control" required/>
+                        </div>                       
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iExpiryDate"> Expiry Date </label>
+                        <div class="col-sm-9">
+                            <input type="text" id="iExpiryDate" name="ExpiryDate" placeholder="Expiry Date" class="form-control" required/>
+                        </div>
+                    </div>                    
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iRentSpaceSFT"> Floor Space</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iRentSpaceSFT" name="RentSpaceSFT" placeholder="Rent Space  SFT" class="form-control" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iSFTRate"> Rent Per SFT</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iSftRate" name="SftRate" placeholder="SFT Rate" class="form-control" required/>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iCommonBillRateSFT"> Monthly Common Service Charge </label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iCommonBillRateSFT" name="CommonBillRateSFT" placeholder="Common Bill Rate/SFT" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iLessAITPercent"> Less AIT</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iLessAITPercent" name="LessAITPercent" placeholder="Less AIT" class="form-control" required />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iLessAITPercent"> AIT on Rent</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iRentAIT" name="RentAIT" placeholder="AIT on Rent" class="form-control" required />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iLessAITPercent"> AIT on Common</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iCommonAIT" name="CommonAIT" placeholder="AIT on Common" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iAdvance"> Advance Adjustment</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69" id="iAdvancePay" name="AdvancePay" placeholder="AdvancePay" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right" for="iAdvanceAdjustment"> Advance Pay</label>
+
+                        <div class="col-sm-9">
+                            <input type="number" onkeydown="return event.keyCode !== 69"  id="iAdvanceAdjustment" name="AdvanceAdjustment" placeholder="AdvancePay" class="form-control" required />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit_button" class="btn btn-primary" onclick="saveData()">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#endregion-->
+
+@section scripts
+{
+    <script>       
+
+        $(document).ready(function () {
+
+            $('#submit_button').on('click', function () {
+                $('#inputForm').validate();
+            });
+        });
+
+        // region Load Dropdown
+
+        $.ajax({
+            type: 'Get',
+            url: '/TenantInfo/TenantList'
+        })
+            .done(function (result) {
+                if (result.status) {
+                    $('#iSTenantName').append('<option value="">All Tenant</option>');
+                    $.each(result.Data, function () {
+                        $('#iSTenantName').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                        $('#iTenantName').append('<option value="' + this.Id + '">' + this.Name + '</option>');
+                    });
+                }
+            })
+            .fail(function (xhr) {
+                alert("error");
+            });
+
+        // endregion
+
+
+        // region Load Table Data
+
+        var table = $('#FloorRentInfoList').DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '/FloorRentInfo/GetList',
+                type: 'POST',
+                dataType: "JSON"
+            },
+            columns: [
+                { data: "FloorLevel" },
+                { data: "TenantName" },
+                { data: "EffectiveDateText" },
+                { data: "ExpiryDateText" },
+                { data: "RentSpaceSFT" },
+                { data: "SftRate" },
+                { data: "CommonBillRateSFT" },
+                { data: "LessAITPercent" },
+                { data: "RentAIT" },
+                { data: "CommonAIT"},
+                { data: "AdvanceAdjustment"},
+                { data: "AdvancePay"},
+                {
+                    data: null, width: 50, orderable: false, render: function (data, type, row) {
+                        return "<a href='javascript:EditData(" + row.Id + ");'><i class='ace-icon fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;<a href='javascript:DeleteData(" + row.Id + ");'><i class='ace-icon red fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+            dom: '<"top"Bi>tr<"bottom"p><"clear">',
+            lengthMenu:
+            [[10, 25, 50, 100, 500, -1], ['10 rows', '25 rows', '50 rows', '100 rows', '500 rows', 'Show all']],
+            buttons: ['pageLength', 'print']
+        });
+
+        // endregion
+
+
+        // region Search
+
+        function search() {
+            $('#searchModal').modal('toggle');
+        }
+
+        function setSearchVals(iSTenantName) {
+            //table.columns(0).search(iSFloorLevel);
+            table.columns(1).search(iSTenantName);
+            //table.columns(2).search(iSEffectiveDate);
+            //table.columns(3).search(iSExpiryDate);
+            //table.columns(4).search(iSRentSpaceSFT);
+            //table.columns(5).search(iSSftRate);
+        }
+        function searchInTable() {
+            setSearchVals($('#iSTenantName').val());            
+            $('#searchModal').modal('hide');
+            table.ajax.reload();            
+        }
+        function clearSearch() {
+            $('#STenantName').val('');            
+        }
+
+        // endregion
+
+
+        // region Show Input Modal
+
+        function ShowInputModal() {
+            $('#iFloorLevel').prop("readonly", false);
+            $('#iTenantName').prop("disabled", false);
+            $('#iEffectiveDate').prop("readonly", false);
+            $("#inputForm").trigger("reset");
+            $('#iId').val(0);
+            $('#inputModal').modal('show');
+        }
+
+        // endregion
+
+        function ReloadTable() {
+            table.ajax.reload();
+        }
+
+        // region Save Input Data
+
+        function saveData() {
+            $("#inputForm").submit();
+        }
+        $("#inputForm").on("submit", function (event) {
+            event.preventDefault();
+            $('#iTenantName').prop("disabled", false);
+            var $this = $(this);
+            var frmValues = $this.serialize();
+            var isValid = $("#inputForm").valid();
+
+            if (isValid == false) {
+
+            }
+
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/FloorRentInfo/Save',
+                    data: frmValues
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            $('#inputModal').modal('hide');
+                            ReloadTable();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                    });
+            }
+        });
+
+
+        // endregion
+
+
+        
+        // region Edit Data
+        
+        function EditData(Id) {
+            $.ajax({
+                type: 'POST',
+                url: '/FloorRentInfo/GetDetails',
+                data: { id: Id }
+            })
+                .done(function (result) {
+                    if (result.status) {
+                        $('#iId').val(result.Data.Id);
+                        $('#iFloorLevel').val(result.Data.FloorLevel);
+                        $('#iTenantName').val(result.Data.TenantInfoId).prop("disabled", true);
+                        $('#iEffectiveDate').val(result.Data.EffectiveDateText);
+                        $('#iExpiryDate').val(result.Data.ExpiryDateText);
+                        $('#iRentSpaceSFT').val(result.Data.RentSpaceSFT);
+                        $('#iSftRate').val(result.Data.SftRate);
+                        $('#iCommonBillRateSFT').val(result.Data.CommonBillRateSFT);
+                        $('#iLessAITPercent').val(result.Data.LessAITPercent);
+                        $('#iRentAIT').val(result.Data.RentAIT);
+                        $('#iCommonAIT').val(result.Data.CommonAIT);
+                        $('#iAdvancePay').val(result.Data.AdvancePay);
+                        $('#iAdvanceAdjustment').val(result.Data.AdvanceAdjustment);
+
+                        console.log(result.Data);
+                        $('#inputModal').modal('show');
+                    }
+                })
+                .fail(function (xhr) {
+                    alert("error");
+                });
+        }
+
+        // endregion
+
+
+
+        // region Delete Data
+
+        function DeleteData(Id) {
+
+            if (confirm('Are You Sure You Want to Delete?'))
+            {
+                $.ajax({
+                    type: 'POST',
+                    url: '/FloorRentInfo/Delete',
+                    data: { id: Id }
+                })
+                    .done(function (result) {
+                        if (result) {
+                            alert(result.info);
+                            ReloadTable();
+                        }
+                    })
+                    .fail(function (xhr) {
+                        alert("error");
+                    });
+            }
+
+            else
+            {
+                return;
+            }
+            
+        }
+
+        // endregion
+
+        $(function () {
+            $('#iSEffectiveDate').datetimepicker({
+                format: 'YYYY-MM-DD',
+            });
+        });
+
+        $(function () {
+            $('#iSExpiryDate').datetimepicker({
+                format: 'YYYY-MM-DD',
+            });
+        });
+
+        $(function () {
+            $('#iEffectiveDate').datetimepicker({
+                format: 'YYYY-MM-DD',
+            });
+        });
+
+        $(function () {
+            $('#iExpiryDate').datetimepicker({
+                format: 'YYYY-MM-DD',
+            });
+        });
+
+    </script>
+}
